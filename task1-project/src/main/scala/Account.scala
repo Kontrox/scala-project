@@ -1,7 +1,5 @@
-
 import java.util.concurrent.locks.{ReadWriteLock, ReentrantReadWriteLock}
-
-import exceptions.{IllegalAmountException, NoSufficientFundsException}
+import exceptions._
 
 class Account(initialBalance: Double, val uid: Int = Bank.getUniqueId) {
 
@@ -13,8 +11,7 @@ class Account(initialBalance: Double, val uid: Int = Bank.getUniqueId) {
         try {
             if(amount < 0){
                 throw new IllegalAmountException("Invalid withdraw. Negative amount.")
-            }
-            else if(balance - amount < 0){
+            }else if(amount > balance){
                 throw new NoSufficientFundsException("Invalid withdraw. Insufficient funds.")
             }
             balance -= amount

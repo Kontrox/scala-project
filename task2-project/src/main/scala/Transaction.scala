@@ -7,20 +7,33 @@ object TransactionStatus extends Enumeration {
 
 class TransactionQueue {
 
+  var queue: List[Transaction] = List()
   // Remove and return the first element from the queue
-  def pop: Transaction = ???
+  def pop: Transaction = {
+    val lastEl = queue.head
+    queue = queue.tail
+    lastEl
+  }
 
   // Return whether the queue is empty
-  def isEmpty: Boolean = ???
+  def isEmpty: Boolean = {
+    queue.isEmpty
+  }
 
   // Add new element to the back of the queue
-  def push(t: Transaction): Unit = ???
+  def push(t: Transaction): Unit = {
+    queue = queue ::: List(t)
+  }
 
   // Return the first element from the queue without removing it
-  def peek: Transaction = ???
+  def peek: Transaction = {
+    queue.head
+  }
 
   // Return an iterator to allow you to iterate over the queue
-  def iterator: Iterator[Transaction] = ???
+  def iterator: Iterator[Transaction] = {
+    queue.toIterator
+  }
 }
 
 class Transaction(val transactionsQueue: TransactionQueue,
@@ -32,20 +45,20 @@ class Transaction(val transactionsQueue: TransactionQueue,
 
   var status: TransactionStatus.Value = TransactionStatus.PENDING
 
-  override def run: Unit = {
+  override def run(): Unit = {
 
-    def doTransaction() = {
+    def doTransaction(): Unit = {
       from withdraw amount
       to deposit amount
     }
 
-    if (from.uid < to.uid) from synchronized {
+    if (from.getAccountId < to.getAccountId) from synchronized {
       to synchronized {
-        doTransaction
+        doTransaction()
       }
     } else to synchronized {
       from synchronized {
-        doTransaction
+        doTransaction()
       }
     }
 
