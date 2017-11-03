@@ -1,2 +1,10 @@
 .idea/
-task2-project/
+task1-project/.idea/
+task1-project/project/
+task1-project/target/
+task2-project/.idea/
+task2-project/project/
+task2-project/target/
+task3-project/.idea/
+task3-project/project/
+task3-project/target/
