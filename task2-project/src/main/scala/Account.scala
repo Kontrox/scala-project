@@ -7,7 +7,7 @@ class Account(val bank: Bank, initialBalance: Double) {
   class Balance(var amount: Double) {}
 
   val balance = new Balance(initialBalance)
-  private val uid: Int = bank.generateAccountId
+  val uid: Int = bank.generateAccountId
   private val lock: ReadWriteLock = new ReentrantReadWriteLock()
 
   def withdraw(amount: Double): Unit = {  // Implement
@@ -37,8 +37,6 @@ class Account(val bank: Bank, initialBalance: Double) {
     try balance.amount
     finally { lock.writeLock().unlock() }
   }
-
-  def getAccountId: Int = { uid }
 
   def transferTo(account: Account, amount: Double): Unit = {
     bank addTransactionToQueue (this, account, amount)
