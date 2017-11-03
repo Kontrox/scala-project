@@ -10,9 +10,9 @@ class TransactionQueue {
   var queue: List[Transaction] = List()
   // Remove and return the first element from the queue
   def pop: Transaction = {
-    val lastEl = queue.head
+    val firstEl = queue.head
     queue = queue.tail
-    lastEl
+    firstEl
   }
 
   // Return whether the queue is empty
@@ -34,6 +34,7 @@ class TransactionQueue {
   def iterator: Iterator[Transaction] = {
     queue.toIterator
   }
+
 }
 
 class Transaction(val transactionsQueue: TransactionQueue,
@@ -50,9 +51,10 @@ class Transaction(val transactionsQueue: TransactionQueue,
     def doTransaction(): Unit = {
       from withdraw amount
       to deposit amount
+      System.out.println("Did transaction")
     }
 
-    if (from.getAccountId < to.getAccountId) from synchronized {
+    if (from.uid < to.uid) from synchronized {
       to synchronized {
         doTransaction()
       }

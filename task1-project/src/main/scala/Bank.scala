@@ -2,7 +2,7 @@ import java.util.concurrent.locks.{ReadWriteLock, ReentrantReadWriteLock}
 
 object Bank {
 
-    private var idCounter: Int = 0
+    private var idCounter = 0
     private val lock: ReadWriteLock = new ReentrantReadWriteLock()
 
     def transaction(from: Account, to: Account, amount: Double): Unit = { // Implement
