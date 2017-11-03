@@ -42,16 +42,30 @@ class Transaction(val transactionsQueue: TransactionQueue,
                   val from: Account,
                   val to: Account,
                   val amount: Double,
-                  val allowedAttemps: Int) extends Runnable {
+                  val allowedAttemps: Int,
+                  var attempts: Int = 0) extends Runnable {
 
   var status: TransactionStatus.Value = TransactionStatus.PENDING
 
   override def run(): Unit = {
 
     def doTransaction(): Unit = {
-      from withdraw amount
-      to deposit amount
-      System.out.println("Did transaction")
+      try{
+        attempts += 1
+        from withdraw amount
+        to deposit amount
+        status = TransactionStatus.SUCCESS
+        processedTransactions.push(this)
+      } catch {
+        case c: IllegalAmountException =>
+          status = TransactionStatus.FAILED
+          if(attempts < allowedAttemps) transactionsQueue.push(this)
+          else processedTransactions.push(this)
+        case c: NoSufficientFundsException =>
+          status = TransactionStatus.FAILED
+          if(attempts < allowedAttemps) transactionsQueue.push(this)
+          else processedTransactions.push(this)
+      }
     }
 
     if (from.uid < to.uid) from synchronized {
@@ -65,6 +79,7 @@ class Transaction(val transactionsQueue: TransactionQueue,
     }
 
     // Extend this method to satisfy new requirements.
+
 
   }
 }

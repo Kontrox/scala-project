@@ -10,20 +10,15 @@ object Main extends App {
     }
 
   var bank = new Bank()
-  var queue = new TransactionQueue()
-  var processedTransQueue = new TransactionQueue()
   var from = new Account(bank, 100000)
   var to = new Account(bank, 0)
 
-  queue.push(new Transaction(queue, processedTransQueue, from, to, 500, 1))
-  System.out.println(queue.queue, from.balance.amount, to.balance.amount)
-  queue.push(new Transaction(queue, processedTransQueue, from, to, 600, 1))
-  System.out.println(queue.queue, from.balance.amount, to.balance.amount)
-  queue.push(new Transaction(queue, processedTransQueue, from, to, 700, 1))
-  System.out.println(queue.queue, from.balance.amount, to.balance.amount)
+  bank.addTransactionToQueue(from, to, 500)
+  bank.addTransactionToQueue(from, to, 600)
+  bank.addTransactionToQueue(from, to, 700)
 
   Thread.sleep(1000)
-  System.out.println(queue.queue, from.balance.amount, to.balance.amount)
+  System.out.println(from.balance.amount, to.balance.amount)
 
 
 }

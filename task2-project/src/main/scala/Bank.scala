@@ -11,7 +11,8 @@ class Bank(val allowedAttempts: Integer = 3) {
   private var numberOfAccounts = 0
   private var processing = false
 
-  private val lock: ReadWriteLock = new ReentrantReadWriteLock()
+  private val generationLock: ReadWriteLock = new ReentrantReadWriteLock()
+  private val transactionLock: ReadWriteLock = new ReentrantReadWriteLock()
 
   val processingThread: Thread {
     def run(): Unit
@@ -20,7 +21,8 @@ class Bank(val allowedAttempts: Integer = 3) {
       while (true){
         if(!processing){
           processing = true
-          processTransactions
+          transactionLock.writeLock().lock()
+          processTransactions()
         }
         Thread.sleep(200)
       }
@@ -29,23 +31,35 @@ class Bank(val allowedAttempts: Integer = 3) {
   processingThread.start()
 
   def addTransactionToQueue(from: Account, to: Account, amount: Double): Unit = {
+    transactionLock.writeLock().lock()
+    try{
       transactionsQueue push new Transaction(
-      transactionsQueue, processedTransactions, from, to, amount, allowedAttempts)
+        transactionsQueue, processedTransactions, from, to, amount, allowedAttempts)
+    } finally { transactionLock.writeLock().unlock() }
+
   }
 
   def generateAccountId: Int = {
-      lock.writeLock().lock()
+      generationLock.writeLock().lock()
       try{
         numberOfAccounts += 1
         numberOfAccounts
-      } finally {lock.writeLock().unlock()}
+      } finally {generationLock.writeLock().unlock()}
   }
 
-  private def processTransactions: Unit = {
-    transactionsQueue.iterator.foreach {
-      executorContext.execute(_)
+  private def processTransactions(): Unit = {
+    /*val list = transactionsQueue.iterator
+    System.out.println(list)
+    while (list.hasNext){
+      val it = list.next()
+      executorContext.execute(it)
+    }*/
+    while (!transactionsQueue.isEmpty){
+      val trans = transactionsQueue.pop
+      executorContext.execute(trans)
+      //processedTransactions.push(trans)
     }
-
+    transactionLock.writeLock().unlock()
     processing = false
   }
 
