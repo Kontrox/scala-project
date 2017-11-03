@@ -22,7 +22,6 @@ object TestHelper {
     implicit val timeout = Timeout(5 seconds)
     val accountRef = Await.result(ask(bank, CreateAccountRequest(amount)).mapTo[ActorRef], 10 seconds)
     val account = Await.result(ask(accountRef, IdentifyActor).mapTo[Account], 10 seconds)
-
     (accountRef, account)
   }
 
@@ -95,7 +94,6 @@ class Test04 extends FunSuite {
 
   }
 }
-
 
 class Test05 extends FunSuite {
 
@@ -432,7 +430,6 @@ class Test16 extends FunSuite {
 
   }
 }
-
 
 class Test17 extends FunSuite {
 
